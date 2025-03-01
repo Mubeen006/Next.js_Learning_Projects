@@ -1,5 +1,5 @@
 import React from 'react'
-
+import Feed from '@/components/Feed'
 const Home = () => {
   return (
     <section className="w-full items-center justify-center flex-col">
@@ -12,7 +12,8 @@ const Home = () => {
         tool for modern world to discover, create 
         and share creative prompts
       </p>
-      {/* Feed*/}
+
+      <Feed />
     </section>
   )
 }
