@@ -3,6 +3,8 @@ import React, { useRef, useEffect, useCallback, memo } from "react";
 import Image from "next/image";
 import { useState } from "react";
 import gsap from "gsap";
+import LoadingSpinner from "./components/LoadingSpinner";
+import { optimizeCloudinaryUrl, isCloudinaryUrl } from "./utils/imageUtils";
 
 // Define custom animation classes - these will be used directly in the JSX
 // instead of trying to inject them with useEffect
@@ -324,10 +326,13 @@ const page = () => {
   const [educationMessage, setEducationMessage] = useState("");
   // Store submitted user data for success screen
   const [submittedUserData, setSubmittedUserData] = useState(null);
+  // Track loading state
+  const [isLoading, setIsLoading] = useState(false);
   
   /**
    * Handle image upload
-   * Converts the selected file to base64 format for preview
+   * Converts the selected file to base64 format for preview and upload
+   * The base64 data will be sent to the server and then uploaded to Cloudinary
    */
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -529,21 +534,17 @@ const page = () => {
         }
       }
       
-      // Prepare data - handle potential large images
+      // Prepare data for submission
       const dataToSubmit = {...user};
       
-      // If image is too large (over ~1MB), resize or remove it
-      if (dataToSubmit.image && dataToSubmit.image.length > 1400000) {
-        // Option 1: Remove the image
-        // dataToSubmit.image = null;
-        
-        // Option 2: Alert the user
-        alert("Your image is too large. Please upload a smaller image.");
-        return;
-      }
+      // No need to check image size here as Cloudinary will handle optimization
+      // The backend will upload the image to Cloudinary and store the URL
 
       // Save the data to be submitted for use in the success screen
       setSubmittedUserData(dataToSubmit);
+
+      // Show loading state
+      setIsLoading(true);
 
       // Submit data to API
       const response = await fetch('/api/users', {
@@ -553,6 +554,9 @@ const page = () => {
         },
         body: JSON.stringify(dataToSubmit),
       });
+
+      // Hide loading state
+      setIsLoading(false);
 
       const result = await response.json();
 
@@ -573,6 +577,15 @@ const page = () => {
       } else {
         console.log('Form submitted successfully:', result);
         
+        // Update submitted user data with Cloudinary image URL from response
+        if (result.data && result.data.image) {
+          setSubmittedUserData(prevData => ({
+            ...prevData,
+            image: result.data.image,
+            imagePublicId: result.data.imagePublicId
+          }));
+        }
+        
         // Reset form fields
         resetForm();
         
@@ -592,6 +605,9 @@ const page = () => {
         }, 300); // Small delay to ensure success screen is rendered
       }
     } catch (error) {
+      // Hide loading state
+      setIsLoading(false);
+      
       console.error('Error submitting form:', error);
       alert('An unexpected error occurred. Please try again later.');
     }
@@ -800,8 +816,10 @@ const page = () => {
   }
   
   return (
-    // Main container with dynamic gradient background based on user selections
-    <div className={`min-h-screen bg-gradient-to-b ${getBackgroundGradient()} w-full transition-all duration-3000`}>
+    <div className={`min-h-screen w-full bg-gradient-to-b ${getBackgroundGradient()} transition-all duration-3000`}>
+      {/* Show loading spinner during form submission */}
+      {isLoading && <LoadingSpinner />}
+      
       {showConfetti && <Confetti />}
       {showHearts && <FloatingHearts />}
 
@@ -1046,7 +1064,7 @@ const page = () => {
               {user.image && (
                 <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white/70 shadow-xl group">
                   <img
-                    src={user.image}
+                    src={isCloudinaryUrl(user.image) ? optimizeCloudinaryUrl(user.image, { width: 200, height: 200 }) : user.image}
                     alt="User Preview"
                     className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300"
                   />
@@ -1066,7 +1084,7 @@ const page = () => {
               {/* Custom label button for image upload */}
               <label
                 htmlFor="imageUpload"
-                className={`px-4 py-2 ${!user.image ? 'bg-pink-500/50 animate-pulse' : 'bg-white/20'} backdrop-blur-sm rounded-lg cursor-pointer hover:bg-white/30 transition-all text-white shadow-md`}
+                className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg cursor-pointer hover:bg-white/30 transition-all text-white shadow-md"
               >
                 📷 Apni Sohni Jehi Photo Upload Karo * {!user.image && '(Required)'}
               </label>

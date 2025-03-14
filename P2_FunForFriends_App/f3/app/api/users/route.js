@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
+import { uploadImage } from '@/lib/cloudinary';
 
 /**
  * POST handler for creating a new user
@@ -31,15 +32,30 @@ export async function POST(request) {
       }, { status: 400 });
     }
     
-    // Check if image is too large (limit to ~1MB base64)
-    if (userData.image && userData.image.length > 1400000) {
+    // Check if image is provided
+    if (!userData.image) {
       return NextResponse.json({ 
         success: false, 
-        message: 'Image is too large. Please upload a smaller image (max 1MB).' 
-      }, { status: 413 });
+        message: 'Image is required' 
+      }, { status: 400 });
     }
     
-    // Create a new user document
+    // Upload image to Cloudinary
+    const imageUploadResult = await uploadImage(userData.image);
+    
+    if (!imageUploadResult.success) {
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Failed to upload image to Cloudinary',
+        error: imageUploadResult.error
+      }, { status: 500 });
+    }
+    
+    // Replace base64 image with Cloudinary URL and add public ID
+    userData.image = imageUploadResult.url;
+    userData.imagePublicId = imageUploadResult.public_id;
+    
+    // Create a new user document with Cloudinary image URL
     const user = await User.create(userData);
     
     // Return success response
@@ -95,8 +111,8 @@ export async function GET() {
     await dbConnect();
     
     // Fetch all users, sorted by creation date (newest first)
-    // Exclude the image field to reduce response size
-    const users = await User.find({}, { image: 0 }).sort({ createdAt: -1 });
+    // We no longer need to exclude the image field since it's now a URL, not base64 data
+    const users = await User.find({}).sort({ createdAt: -1 });
     
     // Return success response
     return NextResponse.json({ 

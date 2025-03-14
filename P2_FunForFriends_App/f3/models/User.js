@@ -69,7 +69,12 @@ const userSchema = new mongoose.Schema({
     trim: true
   },
   image: {
-    type: String // Store base64 image data
+    type: String, // Store Cloudinary URL instead of base64 data
+    required: [true, 'Image is required']
+  },
+  imagePublicId: {
+    type: String, // Store Cloudinary public ID for future reference
+    trim: true
   },
   createdAt: {
     type: Date,
