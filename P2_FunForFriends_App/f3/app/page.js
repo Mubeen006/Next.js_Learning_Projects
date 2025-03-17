@@ -650,7 +650,7 @@ const page = () => {
       } else if (age >= 15 && age <= 30) {
         setAgeMessage("Assalam-o-Alaikum Paaji! 🙏 Tussi form fill kar rahe ho, bahut vadiya! Gal baat kariye sanu 💬");
       } else if (age > 30) {
-        setAgeMessage("Assalam-o-Alaikum Vadde Bhaji! 🙏 Tussi apna tajurba te gyaan sanjha karo saade naal 🌟");
+        setAgeMessage("Assalam-o-Alaikum Vadde Paaji! 🙏 Tussi apna tajurba te gyaan sanjha karo saade naal 🌟");
       }
     } 
     // Different messages for females based on age - enhanced with more respectful and engaging content
@@ -662,7 +662,7 @@ const page = () => {
         setAgeMessage("Sohni Behna! 💖 Padhai vich dhyan deo, future bright banao. Saanu dasna ki padhna chaundi ho? 📚");
       }
       else if (age >= 18 && age <= 30) {
-        setAgeMessage("Assalam-o-Alaikum Ji! ✨ Tussi bahut sohne ho! Relationship ch interested ho? Saanu bahut khushi hogi! 💕");
+        setAgeMessage("Assalam-o-Alaikum Ji! ✨ Tussi bahut sohne ho! Tuhada form fill karna saanu bahut changa lagya. Kash koi special banda/kudi mil jaye jehda tuhanu samajh sake te tuhade naal zindagi di khushiyan share kare 💝");
       }
       else if (age > 30) {
         setAgeMessage("Assalam-o-Alaikum Anti! 🙏 Tussi apna gyaan sanjha karo saade naal, bahut meherbani hogi 💫");

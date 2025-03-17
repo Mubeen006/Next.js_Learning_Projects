@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 
 // Define the user schema
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Name is required'],
@@ -84,17 +84,19 @@ const userSchema = new mongoose.Schema({
   timestamps: true,
   // Add this to ensure virtuals are included when converting to JSON
   toJSON: { virtuals: true },
-  toObject: { virtuals: true }
+  toObject: { virtuals: true },
+  // Explicitly set the collection name
+  collection: 'f3_users'
 });
 
-// Create and export the User model
+// Create and export the f3_res_User model
 // Use a try-catch to handle model compilation errors
-let User;
+let f3_res_User;
 try {
   // Check if the model already exists to prevent overwriting during hot reloads
-  User = mongoose.models.User || mongoose.model('User', userSchema);
+  f3_res_User = models.f3_res_User || model('f3_res_User', userSchema);
 } catch (error) {
-  User = mongoose.model('User', userSchema);
+  f3_res_User = model('f3_res_User', userSchema);
 }
 
-export default User; 
+export default f3_res_User; 

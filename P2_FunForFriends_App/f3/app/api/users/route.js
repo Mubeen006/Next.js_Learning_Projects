@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
-import User from '@/models/User';
+import f3_User from '@/models/f3_User';
 import { uploadImage } from '@/lib/cloudinary';
 
 /**
@@ -56,7 +56,7 @@ export async function POST(request) {
     userData.imagePublicId = imageUploadResult.public_id;
     
     // Create a new user document with Cloudinary image URL
-    const user = await User.create(userData);
+    const user = await f3_User.create(userData);
     
     // Return success response
     return NextResponse.json({ 
@@ -112,7 +112,7 @@ export async function GET() {
     
     // Fetch all users, sorted by creation date (newest first)
     // We no longer need to exclude the image field since it's now a URL, not base64 data
-    const users = await User.find({}).sort({ createdAt: -1 });
+    const users = await f3_User.find({}).sort({ createdAt: -1 });
     
     // Return success response
     return NextResponse.json({ 

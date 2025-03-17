@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
-import User from '@/models/User';
+import f3_User from '@/models/f3_User';
 import mongoose from 'mongoose';
 
 /**
@@ -22,7 +22,7 @@ export async function GET(request, { params }) {
     }
     
     // Find the user by ID
-    const user = await User.findById(id);
+    const user = await f3_User.findById(id);
     
     // Check if user exists
     if (!user) {
@@ -72,7 +72,7 @@ export async function PUT(request, { params }) {
     const updateData = await request.json();
     
     // Find and update the user
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await f3_User.findByIdAndUpdate(
       id,
       updateData,
       { new: true, runValidators: true }
@@ -140,7 +140,7 @@ export async function DELETE(request, { params }) {
     }
     
     // Find and delete the user
-    const deletedUser = await User.findByIdAndDelete(id);
+    const deletedUser = await f3_User.findByIdAndDelete(id);
     
     // Check if user exists
     if (!deletedUser) {

@@ -27,26 +27,26 @@ async function dbConnect() {
       );
     }
 
-    // Ensure we're connecting to the correct database
-    // Parse the URI to check if it already has a database name
-    let uri = MONGODB_URI;
-    if (!uri.includes('/fun_for_friends')) {
-      // If no database is specified in the URI, add it
-      if (uri.endsWith('/')) {
-        uri += 'fun_for_friends';
-      } else if (!uri.split('/').pop().includes('?')) {
-        uri += '/fun_for_friends';
-      } else {
-        // If there are query parameters but no database
-        const parts = uri.split('/');
-        const lastPart = parts.pop();
-        if (lastPart.includes('?')) {
-          parts.push('fun_for_friends');
-          parts.push(lastPart);
-          uri = parts.join('/');
-        }
-      }
-    }
+    // // Ensure we're connecting to the correct database
+    // // Parse the URI to check if it already has a database name
+    // let uri = MONGODB_URI;
+    // if (!uri.includes('/fun_for_friends')) {
+    //   // If no database is specified in the URI, add it
+    //   if (uri.endsWith('/')) {
+    //     uri += 'fun_for_friends';
+    //   } else if (!uri.split('/').pop().includes('?')) {
+    //     uri += '/fun_for_friends';
+    //   } else {
+    //     // If there are query parameters but no database
+    //     const parts = uri.split('/');
+    //     const lastPart = parts.pop();
+    //     if (lastPart.includes('?')) {
+    //       parts.push('fun_for_friends');
+    //       parts.push(lastPart);
+    //       uri = parts.join('/');
+    //     }
+    //   }
+    // }
 
     // Updated options - removed deprecated options
     const options = {
